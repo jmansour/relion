@@ -633,9 +633,18 @@ the job will be executed locally. Note that only MPI jobs may be sent to a queue
     // Need the std::string(), as otherwise it will be overloaded and passed as a boolean....
     joboptions["queuename"] = JobOption("Queue name: ", std::string("openmpi"), "Name of the queue to which to submit the job.");
 
-    joboptions["qsub"] = JobOption("Queue submit command:", std::string("qsub"), "Name of the command used to submit scripts to the queue, e.g. qsub or bsub.\n\n\
+    
+    char * default_qsub_command = getenv ("RELION_QSUB_COMMAND");
+    if (default_qsub_command==NULL)
+    {
+        char my_qsub_command[]=DEFAULTQSUBCOMMAND;
+        default_qsub_command=my_qsub_command;
+    }
+
+    joboptions["qsub"] = JobOption("Queue submit command:", std::string(default_qsub_command), "Name of the command used to submit scripts to the queue, e.g. qsub or bsub.\n\n\
 Note that the person who installed RELION should have made a custom script for your cluster/queue setup. Check this is the case \
-(or create your own script following the RELION WIKI) if you have trouble submitting jobs.");
+(or create your own script following the RELION WIKI) if you have trouble submitting jobs.\n\n\
+A default submission command may be defined by setting the environment variable RELION_QSUB_COMMAND.");
 
 	// Two additional options that may be set through environment variables RELION_QSUB_EXTRA1 and RELION_QSUB_EXTRA2 (for more flexibility)
 	char * extra1_text = getenv ("RELION_QSUB_EXTRA1");
